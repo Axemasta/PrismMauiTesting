@@ -100,10 +100,9 @@ public class TeamsViewModelTests : FixtureBase<TeamsViewModel>
         Sut.TeamSelectedCommand.Execute(skGaming);
 
         // Assert
-        navigationService.Verify(
-            m => m.NavigateAsync(
-                It.Is<Uri>(u => u.Equals("TeamPage")),
-                It.Is<INavigationParameters>(np => np.ContainsKey("SelectedTeam"))),
+        navigationService.VerifyNavigation(
+            "TeamPage",
+            expectedNavParams,
             Times.Once());
 
         logger.Verify(

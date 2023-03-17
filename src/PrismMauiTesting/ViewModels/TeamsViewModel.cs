@@ -45,14 +45,14 @@ public class TeamsViewModel : ViewModelBase
             { "SelectedTeam", lecTeam },
         };
 
-        //var result = await navigationService.CreateBuilder()
-        //    .AddSegment<TeamViewModel>()
-        //    .WithParameters(parameters)
-        //    //.AddParameter("SelectedTeam", lecTeam)
-        //    //.AddParameter(KnownNavigationParameters.Animated, true)
-        //    .NavigateAsync();
+        var result = await navigationService.CreateBuilder()
+            .AddSegment<TeamViewModel>()
+            .WithParameters(parameters)
+            //.AddParameter("SelectedTeam", lecTeam)
+            //.AddParameter(KnownNavigationParameters.Animated, true)
+            .NavigateAsync();
 
-        var result = await navigationService.NavigateAsync("TeamPage", parameters);
+        //var result = await navigationService.NavigateAsync("TeamPage", parameters);
 
         if (!result.Success)
         {
