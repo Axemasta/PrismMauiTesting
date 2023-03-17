@@ -12,6 +12,10 @@ This is a really basic navigation demo with a list of [LEC teams](https://twitte
 
 ## Tests
 
-Currently the navigation service mock tests do not work, I need to work out how to mock prisms `INavigationService` now that the majority of the methods are extension methods.
+I managed to get the tests working with a custom mock implementation of the `INavigationService` with some extra methods, I think I can turn this into some kind of testing library to make things alot easier!
+
+~~Currently the navigation service mock tests do not work, I need to work out how to mock prisms `INavigationService` now that the majority of the methods are extension methods.~~
 
 ![The status of all the tests I have written](assets/failing-tests.png)
+
+![Passing tests](assets/passing-tests.png)

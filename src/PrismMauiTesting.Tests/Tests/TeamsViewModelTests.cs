@@ -12,13 +12,15 @@ public class TeamsViewModelTests : FixtureBase<TeamsViewModel>
     #region Setup
 
     private readonly Mock<ILogger<TeamsViewModel>> logger;
-    private readonly Mock<INavigationService> navigationService;
+
+    private readonly MoqNavigationService navigationService;
+
     private readonly Mock<ITeamService> teamService;
 
     public TeamsViewModelTests()
     {
         logger = new Mock<ILogger<TeamsViewModel>>();
-        navigationService = new Mock<INavigationService>();
+        navigationService = new MoqNavigationService();
         teamService = new Mock<ITeamService>();
     }
 
@@ -26,7 +28,7 @@ public class TeamsViewModelTests : FixtureBase<TeamsViewModel>
     {
         return new TeamsViewModel(
             logger.Object,
-            navigationService.Object,
+            navigationService,
             teamService.Object);
     }
 
@@ -87,13 +89,12 @@ public class TeamsViewModelTests : FixtureBase<TeamsViewModel>
             IsActive = true,
         };
 
-        var mockResult = new Mock<INavigationResult>();
+        var expectedNavParams = new NavigationParameters()
+        {
+            { "SelectedTeam", skGaming },
+        };
 
-        mockResult.SetupGet(m => m.Success)
-            .Returns(true);
-
-        navigationService.Setup(m => m.NavigateAsync(It.IsAny<Uri>(), It.IsAny<INavigationParameters>()))
-            .ReturnsAsync(mockResult.Object);
+        navigationService.SetupNavigationResult("TeamPage", expectedNavParams, true);
 
         // Act
         Sut.TeamSelectedCommand.Execute(skGaming);
@@ -101,15 +102,15 @@ public class TeamsViewModelTests : FixtureBase<TeamsViewModel>
         // Assert
         navigationService.Verify(
             m => m.NavigateAsync(
-                It.Is<string>(s => s.Equals("TeamPage")),
+                It.Is<Uri>(u => u.Equals("TeamPage")),
                 It.Is<INavigationParameters>(np => np.ContainsKey("SelectedTeam"))),
             Times.Once());
 
         logger.Verify(
             m => m.Log(
-                It.Is<LogLevel>(logLevel => logLevel == LogLevel.Debug),
+                It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
                 It.Is<EventId>(eventId => eventId.Id == 0),
-                It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Team was null" && @type.Name == "FormattedLogValues"),
+                It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Navigation to team page failed" && @type.Name == "FormattedLogValues"),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()),
             Times.Never);
